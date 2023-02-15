@@ -1,8 +1,6 @@
 import { StyleSheet, Text, View, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import CheckBox from "expo-checkbox";
-// import CheckBox from '@react-native-community/checkbox';
 import ButtonWhite from "../../components/ButtonWhite";
 import ButtonGray from "../../components/ButtonGray";
 import ButtonRed from "../../components/ButtonRed";
@@ -133,7 +131,7 @@ const Login = () => {
           </Text>
           <ButtonWhite
             style={{ backgroundColor: "#fff" }}
-            title="Đăng nhập"
+            title="Đăng kí"
             onPress={() => alert("Quyen ne")}
           />
         </View>

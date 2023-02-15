@@ -7,14 +7,15 @@ import Register from './src/screens/Register';
 import RegisterOTP from './src/screens/RegisterOTP';
 import Game from './src/screens/Game';
 import Congratulation from './src/screens/Congratulation';
+import Scan from './src/screens/Scan';
+import Collection from './src/screens/Collection';
 
 
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Congratulation />
-      {/* <Text>Open up App.js to start working on your app!</Text> */}
+      <Collection />
       <StatusBar style="inverted" />
     </View>
   );

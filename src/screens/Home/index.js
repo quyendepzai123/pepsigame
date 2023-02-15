@@ -14,10 +14,13 @@ import ButtonPlayNow from "../../components/ButtonPlayNow";
 import ButtonTimePlay from "../../components/ButtonTimePlay";
 import ButtonClose from "../../components/ButtonClose";
 import ButtonLogout from "../../components/ButtonLogout";
+import ButtonScan from "../../components/ButtonScan";
 const Home = () => {
   const [agree, setAgree] = useState(false);
   const [sdt, setSdt] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [timePlayFree, setTimePlayFree] = useState(0);
+  const [timePlayExchange, settimePlayExchange] = useState(1);
 
   useEffect(() => {
     if (sdt.length === 10) {
@@ -29,76 +32,174 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          {/* <View style={styles.modalView}> */}
-          <LinearGradient
-            colors={["#FCD54E", "#FDEA95", "#FBD239"]}
-            start={{
-              x: 71.25,
-              y: 138.5,
-            }}
-            end={{
-              x: 213.75,
-              y: 138.5,
-            }}
-            style={styles.modalView}
-          >
-            <Image
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
+      {timePlayFree + timePlayExchange > 0 ? (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <LinearGradient
+              colors={["#FCD54E", "#FDEA95", "#FBD239"]}
+              start={{
+                x: 71.25,
+                y: 138.5,
               }}
-              source={require("../../assets/images/modalSelectPlay/left.png")}
-            />
-            <Image
-              style={{
-                position: "absolute",
-                right: 0,
-                top: 65,
+              end={{
+                x: 213.75,
+                y: 138.5,
               }}
-              source={require("../../assets/images/modalSelectPlay/right.png")}
-            />
-            <View style={{ width: "100%", alignItems: "flex-end" }}>
-              <ButtonClose onPress={() => setModalVisible(!modalVisible)} />
-            </View>
+              style={styles.modalView}
+            >
+              <Image
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                }}
+                source={require("../../assets/images/modalSelectPlay/left.png")}
+              />
+              <Image
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 65,
+                }}
+                source={require("../../assets/images/modalSelectPlay/right.png")}
+              />
+              <View style={{ width: "100%", alignItems: "flex-end" }}>
+                <ButtonClose onPress={() => setModalVisible(!modalVisible)} />
+              </View>
 
-            <Text style={styles.modalText}>
-              BẠN MUỐN SỬ DỤNG LƯỢT CHƠI NÀO?
-            </Text>
-            <ButtonTimePlay
-              title="Lượt chơi miễn phí"
-              timePlay="0"
-              onPress={() => alert("chịu")}
-            />
-            <ButtonTimePlay
-              title="Lượt chơi quy đổi"
-              timePlay="5"
-              onPress={() => alert("chịu")}
-            />
-          </LinearGradient>
-          {/* </View> */}
-        </View>
-      </Modal>
+              <Text style={styles.modalText}>
+                BẠN MUỐN SỬ DỤNG LƯỢT CHƠI NÀO?
+              </Text>
+              <ButtonTimePlay
+                style={{
+                  backgroundColor: timePlayFree === 0 ? "#7A848A" : "#D02027",
+                }}
+                title="Lượt chơi miễn phí"
+                timePlay={timePlayFree}
+                onPress={() => alert("chịu")}
+                source={
+                  timePlayFree === 0
+                    ? require("../../assets/images/ButtonPlayNow/squareGray.png")
+                    : require("../../assets/images/ButtonPlayNow/square.png")
+                }
+              />
+              <ButtonTimePlay
+                style={{
+                  backgroundColor:
+                    timePlayExchange === 0 ? "#7A848A" : "#D02027",
+                }}
+                title="Lượt chơi quy đổi"
+                timePlay={timePlayExchange}
+                onPress={() => alert("chịu")}
+                source={
+                  timePlayExchange === 0
+                    ? require("../../assets/images/ButtonPlayNow/squareGray.png")
+                    : require("../../assets/images/ButtonPlayNow/square.png")
+                }
+              />
+            </LinearGradient>
+          </View>
+        </Modal>
+      ) : (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            {/* <View style={styles.modalView}> */}
+            <LinearGradient
+              colors={["#02A7F0", "#0063A7"]}
+              // start={{
+              //   x: 1.1,
+              //   y: -0.1,
+              // }}
+              // end={{
+              //   x: 2.401,
+              //   y: 2.401,
+              // }}
+              style={styles.modalView}
+            >
+              <Image
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                }}
+                source={require("../../assets/images/modalSelectPlay/left.png")}
+              />
+              <Image
+                style={{
+                  position: "absolute",
+                  right: -65,
+                  top: 150,
+                }}
+                source={require("../../assets/images/imageHome/midLeft.png")}
+              />
+
+              <Image
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  bottom: 0,
+                }}
+                source={require("../../assets/images/imageHome/popupvectorbot.png")}
+              />
+              <View style={{ width: "100%", alignItems: "flex-end" }}>
+                <ButtonClose onPress={() => setModalVisible(!modalVisible)} />
+              </View>
+
+              <Text style={styles.modalText}>BẠN ĐÃ HẾT LƯỢT!</Text>
+
+              <Text
+                style={{
+                  width: 220,
+                  color: "#FFF",
+                  fontSize: 16,
+                  textAlign: "center",
+                  fontWeight: "400",
+                }}
+              >
+                Hãy scan thêm mã trên bill mua nước hoặc combo Pepsi rạp để nhận
+                thêm lượt chơi
+              </Text>
+              <Image
+                style={{ width: 120, height: 120, marginTop: 24 }}
+                source={require("../../assets/images/imageHome/faceSad.png")}
+              />
+              <ButtonScan
+                style={{}}
+                title="Scan ngay"
+                onPress={() => alert("chịu")}
+              />
+            </LinearGradient>
+            {/* </View> */}
+          </View>
+        </Modal>
+      )}
+
       <LinearGradient
         colors={["#02A7F0", "#0063A7"]}
-        start={{
-          x: 64 / 100,
-          y: 64 / 100,
-        }}
-        end={{
-          x: 0.5,
-          y: 0.5,
-        }}
+        // start={{
+        //   x: 64 / 100,
+        //   y: 64 / 100,
+        // }}
+        // end={{
+        //   x: 0.5,
+        //   y: 0.5,
+        // }}
         style={styles.box}
       >
         <View style={{ flexDirection: "row" }}>
@@ -221,8 +322,6 @@ const Home = () => {
           <Image
             style={{
               position: "absolute",
-              // width: '100%',
-              // left: 20,
               bottom: 0,
             }}
             source={require("../../assets/images/imageHome/caiTrong.png")}
@@ -241,10 +340,12 @@ const Home = () => {
           </Text>
 
           <ButtonPlayNow
-            style={{ marginBottom: 10 }}
+            style={{
+              marginBottom: 10,
+            }}
             title="Chơi ngay"
             onPress={() => setModalVisible(true)}
-            timePlay="8"
+            timePlay={timePlayFree + timePlayExchange}
           />
 
           <ButtonWhite
@@ -314,9 +415,9 @@ const styles = StyleSheet.create({
   },
   modalText: {
     width: "80%",
-    marginBottom: 15,
+    marginBottom: 4,
     textAlign: "center",
-    color: "#D02027",
+    color: "#FFDD00",
     fontSize: 22,
     fontWeight: "bold",
   },

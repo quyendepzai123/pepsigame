@@ -1,25 +1,23 @@
 import { StyleSheet, Text, View, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import CheckBox from "expo-checkbox";
 import ButtonWhite from "../../components/ButtonWhite";
 import ButtonGray from "../../components/ButtonGray";
 import ButtonRed from "../../components/ButtonRed";
 import TextInputForm from "../../components/TextInputForm";
+import TitleBack from "../../components/TitleBack";
 
-const Register = () => {
+const Scan = () => {
   const [agree, setAgree] = useState(false);
   const [sdt, setSdt] = useState("");
-  const [name, setName] = useState("");
-  const [check, setCheck] = useState(false);
 
   useEffect(() => {
-    if (sdt.length === 10 && name.length !== 0) {
+    if (sdt.length === 10) {
       setAgree(true);
     } else {
       setAgree(false);
     }
-  }, [agree, sdt, name]);
+  }, [agree, sdt]);
 
   return (
     <View style={styles.container}>
@@ -35,7 +33,7 @@ const Register = () => {
         }}
         style={styles.box}
       >
-        <View style={{ flexDirection: "row", marginBottom: 120 }}>
+        <View style={{ flexDirection: "row", marginBottom: 0 }}>
           <Image
             style={{
               position: "absolute",
@@ -53,14 +51,12 @@ const Register = () => {
             source={require("../../assets/images/vector2.png")}
           />
         </View>
-        <View style={{ alignItems: "center", marginBottom: 60 }}>
-          <Text style={{ color: "#ffffff", fontSize: 18 }}>
-            Hey, mừng bạn đến với
-          </Text>
-          <Text style={{ color: "#ffffff", fontSize: 30, fontWeight: "bold" }}>
-            Pepsi Tết
-          </Text>
-        </View>
+        <TitleBack
+          style={{ marginBottom: 40 }}
+          titleScreen="Quét mã"
+          onPressBack={() => alert("back nè")}
+          onPressLogout={() => alert("Logout nè")}
+        />
         <Image
           style={{
             position: "absolute",
@@ -102,44 +98,18 @@ const Register = () => {
           source={require("../../assets/images/vector4.png")}
         />
         <View style={{ alignItems: "center", marginHorizontal: 20 }}>
-          <Text style={{ color: "#ffffff", fontSize: 30, fontWeight: "bold" }}>
-            ĐĂNG KÝ
-          </Text>
-          <TextInputForm
-            placeholder="Số điện thoại"
-            onChangeText={(text) => setSdt(text)}
+          <Image
+            style={{
+              marginTop: 46,
+              marginBottom: 10,
+            }}
+            source={require("../../assets/images/billScan.png")}
           />
-          <TextInputForm
-            placeholder="Tên người dùng"
-            onChangeText={(text) => setName(text)}
-          />
-
-          <View style={{ flexDirection: "row", marginTop: 3 }}>
-            <CheckBox
-              style={{ borderRadius: 7, backgroundColor: "#fff" }}
-              value={check}
-              onValueChange={() => setCheck(!check)}
-              color={check ? "#000000" : undefined}
-            />
-            <Text style={{ marginLeft: 6, color: "#fff", fontWeight: "bold" }}>
-              Tôi đã đọc và đồng ý với{" "}
-              <Text style={{ color: "#FFDD00" }}>thể lệ chương trình</Text>{" "}
-              Pepsi Tết.
-            </Text>
-          </View>
         </View>
-        <View style={{ alignItems: "center", marginTop: 118 }}>
-          {(agree) && (check)  ? (
-            <ButtonRed title="Lấy mã OTP" onPress={() => alert(agree)} />
-          ) : (
-            <ButtonGray title="Lấy mã OTP" onPress={() => alert(agree)} />
-          )}
-          <Text style={{ fontSize: 16, color: "#fff", marginVertical: 12 }}>
-            Hoặc
-          </Text>
-          <ButtonWhite
-            style={{ backgroundColor: "#fff" }}
-            title="Đăng nhập"
+        <View style={{ alignItems: "center", marginTop: 20 }}>
+          <ButtonRed
+            style={{}}
+            title="Quét mã"
             onPress={() => alert("Quyen ne")}
           />
         </View>
@@ -148,7 +118,7 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Scan;
 
 const styles = StyleSheet.create({
   container: {

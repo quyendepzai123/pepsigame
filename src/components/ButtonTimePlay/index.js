@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Pressable, Image } from "react-native";
 import React from "react";
 
 const ButtonTimePlay = (props) => {
-  const { style, onPress, title, timePlay } = props;
+  const { style, onPress, title, timePlay, source } = props;
   return (
     <Pressable style={[styles.container, style]} onPress={() => onPress()}>
       <Image
@@ -10,8 +10,9 @@ const ButtonTimePlay = (props) => {
         source={require("../../assets/images/ButtonPlayNow/point.png")}
       />
       <Image
+      alt="../../assets/images/ButtonPlayNow/square.png"
         style={{ position: "absolute" }}
-        source={require("../../assets/images/ButtonPlayNow/square.png")}
+        source={source}
       />
       <Text style={{ fontSize: 18, fontWeight: "bold", color: "#FFFFFF" }}>
         {title}

@@ -4,6 +4,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import ButtonWhite from "../../components/ButtonWhite";
 import ButtonRed from "../../components/ButtonRed";
 import ButtonLogout from "../../components/ButtonLogout";
+import CongratulationLonNoc from "../../components/CongratulationLonNuoc";
+
 const Congratulation = () => {
   const [agree, setAgree] = useState(false);
   const [sdt, setSdt] = useState("");
@@ -160,37 +162,6 @@ const Congratulation = () => {
         />
         <ButtonLogout onPressLogout={() => alert("log out ne")} />
 
-        <View style={{ alignItems: "center", width: "100%" }}>
-          <View style={{ alignItems: "center", width: 180 }}>
-            <Image
-              style={{
-                marginTop: 34,
-              }}
-              source={require("../../assets/images/Congratulation/lonPepsi.png")}
-            />
-            <Text
-              style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                width: 80,
-                height: 80,
-                fontSize: 34,
-                fontWeight: "bold",
-                color: "#FFFFFF",
-                backgroundColor: "#D02027",
-                textAlign: "center",
-                lineHeight: 80,
-                borderRadius: 50,
-                borderColor: "#FBC926",
-                borderWidth: 1,
-              }}
-            >
-              50
-            </Text>
-          </View>
-        </View>
-
         <View
           style={{
             width: "100%",
@@ -220,40 +191,13 @@ const Congratulation = () => {
             source={require("../../assets/images/imageHome/caiTrong.png")}
           />
         </View>
-        <View style={{ alignItems: "center", marginTop: 20 }}>
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: 18,
-              marginVertical: 8,
-              color: "#FFFFFF",
-              width: 280,
-            }}
-          >
-            Chúc mừng bạn đã nhận được
-            <Text
-              style={{
-                fontWeight: "bold",
-                fontSize: 20,
-                color: "#FFDD00",
-              }}
-            >
-              {"\n"}1 lon Pepsi AN{" "}
-            </Text>
-            ứng với
-            <Text
-              style={{
-                fontWeight: "bold",
-                fontSize: 20,
-                color: "#FFDD00",
-              }}
-            >
-              {" "}
-              50{" "}
-            </Text>
-            coins
-          </Text>
 
+        <CongratulationLonNoc
+          quantityCoins="100"
+          title="1 lon Pepsi AN"
+          source={require("../../assets/images/Congratulation/lonPepsi.png")}
+        />
+        <View style={{ alignItems: "center" }}>
           <ButtonRed
             style={{ marginTop: 20 }}
             title="Xác nhận"

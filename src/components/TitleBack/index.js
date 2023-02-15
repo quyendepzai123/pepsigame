@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React from "react";
 
 const TitleBack = (props) => {
-  const { onPressBack, onPressLogout, title } = props;
+  const { onPressBack, onPressLogout, title, titleScreen } = props;
   return (
     <View
       style={{
@@ -31,11 +31,11 @@ const TitleBack = (props) => {
         }}
       >
         <Text
-          style={{ color: "#FFFFFF", fontSize: 24, textTransform: "uppercase" }}
+          style={{ color: "#FFFFFF", fontSize: 24, textTransform: "uppercase", fontWeight: 'bold' }}
         >
-          VUỐT LÊN ĐỂ CHƠI
+         {titleScreen}
         </Text>
-        <Text style={{ color: "#FFFFFF", fontSize: 18 }}>
+        <Text style={{ color: "#FFFFFF", fontSize: 18 , display: 'none'}}>
           Bạn còn{" "}
           <Text style={{ color: "#FFDD00", fontSize: 18 }}>{title}</Text> lượt
           chơi miễn phí
