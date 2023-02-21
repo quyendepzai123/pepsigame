@@ -22,7 +22,7 @@ const Collection = () => {
     if (quantityAN === 0 || quantityLoc === 0 || quantityPhuc === 0) {
       setQuantity(0);
     }
-    console.log(quantity);
+    // console.log(quantity);
   }, [quantity]);
 
   const Them = () => {

@@ -1,8 +1,10 @@
 import { StyleSheet, Text, View, Image, Pressable } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import PopupLogout from "../PopupLogout";
 
 const TitleBack = (props) => {
   const { onPressBack, onPressLogout, title, titleScreen } = props;
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <View
       style={{
@@ -10,9 +12,13 @@ const TitleBack = (props) => {
         alignItems: "center",
         justifyContent: "space-around",
         marginTop: 56,
-        marginHorizontal: 20
+        marginHorizontal: 20,
       }}
     >
+      <PopupLogout
+        visible={modalVisible}
+        onPressClose={() => setModalVisible(false)}
+      />
       <Pressable onPress={() => onPressBack()}>
         <Image
           style={{
@@ -31,11 +37,16 @@ const TitleBack = (props) => {
         }}
       >
         <Text
-          style={{ color: "#FFFFFF", fontSize: 24, textTransform: "uppercase", fontWeight: 'bold' }}
+          style={{
+            color: "#FFFFFF",
+            fontSize: 24,
+            textTransform: "uppercase",
+            fontWeight: "bold",
+          }}
         >
-         {titleScreen}
+          {titleScreen}
         </Text>
-        <Text style={{ color: "#FFFFFF", fontSize: 18 , display: 'none'}}>
+        <Text style={{ color: "#FFFFFF", fontSize: 18, display: "none" }}>
           Bạn còn{" "}
           <Text style={{ color: "#FFDD00", fontSize: 18 }}>{title}</Text> lượt
           chơi miễn phí
@@ -44,7 +55,7 @@ const TitleBack = (props) => {
       <View>
         <Pressable
           //   style={{ width: 50, height: 50, backgroundColor: "#ccc" }}
-          onPress={() => onPressLogout()}
+          onPress={() => setModalVisible(true)}
         >
           <Image
             style={{
@@ -60,5 +71,3 @@ const TitleBack = (props) => {
 };
 
 export default TitleBack;
-
-const styles = StyleSheet.create({});

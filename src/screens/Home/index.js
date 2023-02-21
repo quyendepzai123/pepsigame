@@ -402,6 +402,14 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
   },
+  modalText: {
+    width: "80%",
+    marginBottom: 4,
+    textAlign: "center",
+    color: "#FFDD00",
+    fontSize: 22,
+    fontWeight: "bold",
+  },
   buttonOpen: {
     backgroundColor: "#F194FF",
   },
@@ -412,13 +420,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
-  },
-  modalText: {
-    width: "80%",
-    marginBottom: 4,
-    textAlign: "center",
-    color: "#FFDD00",
-    fontSize: 22,
-    fontWeight: "bold",
   },
 });

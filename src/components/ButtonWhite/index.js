@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Pressable, Image } from "react-native";
 import React from "react";
 
-const index = (props) => {
+const ButtonWhite = (props) => {
   const { style, onPress, title } = props;
   return (
     <Pressable style={[styles.container, style]} onPress={() => onPress()}>
@@ -20,7 +20,7 @@ const index = (props) => {
   );
 };
 
-export default index;
+export default ButtonWhite;
 
 const styles = StyleSheet.create({
   container: {

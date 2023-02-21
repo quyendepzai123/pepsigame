@@ -1,29 +1,33 @@
-import { StyleSheet, Text, View, Image, Button } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import CheckBox from "expo-checkbox";
+// import CheckBox from '@react-native-community/checkbox';
 import ButtonWhite from "../../components/ButtonWhite";
 import ButtonGray from "../../components/ButtonGray";
 import ButtonRed from "../../components/ButtonRed";
+import TextInputBox from "../../components/TextInputBox";
 import TextInputForm from "../../components/TextInputForm";
-// import auth from "@react-native-firebase/auth";
+
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { firebaseConfig } from "../../../config";
 import firebase from "firebase";
 
-const Login = (props) => {
-  const { navigation } = props;
+const LoginOTP = (props) => {
+  const { navigation, route } = props;
+  const [code, setCode] = useState("");
+  const [number1, setNumber1] = useState("");
+  const [number2, setNumber2] = useState("");
+  const [number3, setNumber3] = useState("");
+  const [number4, setNumber4] = useState("");
   const [agree, setAgree] = useState(false);
-
   useEffect(() => {
-    if (sdt.length === 10) {
-      setAgree(true);
-    } else {
-      setAgree(false);
-    }
-  }, [agree, sdt]);
+    setCode(number1 + number2 + number3 + number4);
+  }, [code, number1, number2, number3, number4]);
+
   const [confirm, setConfirm] = useState(null);
   const [sdt, setSdt] = useState("");
-  const [code, setCode] = useState("");
+  const [code1, setCode1] = useState("");
   const [verify, setVerify] = useState(null);
   const recaptcha = useRef(null);
   const [oke, setOke] = useState(false);
@@ -31,21 +35,27 @@ const Login = (props) => {
   const sendVerify = () => {
     const phoneProvider = new firebase.auth.PhoneAuthProvider();
     phoneProvider
-      .verifyPhoneNumber("+84" + sdt, recaptcha.current)
+      .verifyPhoneNumber("+84" + route.params.phone, recaptcha.current)
       .then(setVerify);
     setSdt("");
   };
-
+  useEffect(() => {
+    console.log(route.params.phone + "_" + verify);
+    sendVerify();
+  }, []);
   const confirmCode = () => {
-    const credential = firebase.auth.PhoneAuthProvider.credential(verify, code);
+    const credential = firebase.auth.PhoneAuthProvider.credential(
+      verify,
+      code1
+    );
     firebase
       .auth()
       .signInWithCredential(credential)
       .then(() => {
-        setCode("");
+        setCode1("");
       })
       .catch((err) => {
-        alert("Error");
+        alert(err);
       });
     alert("Login successful");
   };
@@ -96,6 +106,8 @@ const Login = (props) => {
         </View>
         <Image
           style={{
+            // width: 75,
+            // height: 190,
             position: "absolute",
             left: -16,
             top: 180,
@@ -134,57 +146,63 @@ const Login = (props) => {
           }}
           source={require("../../assets/images/vector4.png")}
         />
-        <View style={{ alignItems: "center", marginHorizontal: 20 }}>
-          <Text style={{ color: "#ffffff", fontSize: 30, fontWeight: "bold" }}>
-            ĐĂNG NHẬP
-          </Text>
-          <View style={{ width: "100%", marginTop: 12 }}>
-            <Text
-              style={{ fontSize: 14, fontWeight: "bold", color: "#FFFFFF" }}
-            >
-              Số điện thoại
-            </Text>
-            <TextInputForm
-              placeholder="Số điện thoại"
-              onChangeText={(text) => setSdt(text)}
-              maxLength={20}
-            />
-          </View>
-
-          <Image
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <Text
             style={{
-              marginTop: 10,
+              fontSize: 22,
+              fontWeight: "bold",
+              color: "#FFFFFF",
+              marginBottom: 8,
             }}
-            source={require("../../assets/images/3lon.png")}
+          >
+            Xác minh OTP
+          </Text>
+          <Text style={{ fontSize: 14, color: "#FFFFFF" }}>
+            Nhập mã OTP vừa được gửi về điện thoại của bạn
+          </Text>
+          <View style={{ flexDirection: "row", marginVertical: 32 }}>
+            <TextInputBox onChangeText={(text) => setNumber1(text)} />
+            <TextInputBox onChangeText={(text) => setNumber2(text)} />
+            <TextInputBox onChangeText={(text) => setNumber3(text)} />
+            <TextInputBox onChangeText={(text) => setNumber4(text)} />
+          </View>
+          <TextInputForm
+            placeholder="Số điện thoại"
+            onChangeText={(text) => setCode1(text)}
+            maxLength={20}
           />
         </View>
-        <View style={{ alignItems: "center", marginTop: 20 }}>
-          {agree ? (
-            <ButtonRed
-              title="Lấy mã OTP"
-              onPress={() => navigation.navigate("LoginOTP", { phone: sdt })}
-            />
+
+        <View style={{ alignItems: "center" }}>
+          {!(code.length === 4) ? (
+            <ButtonGray title="Xác nhận" onPress={() => confirmCode()} />
           ) : (
-            <ButtonGray
-              title="Lấy mã OTP"
-              onPress={() => navigation.navigate("LoginOTP", { phone: sdt })}
-            />
+            <ButtonRed title="Xác nhận" onPress={() => confirmCode()} />
           )}
-          <Text style={{ fontSize: 16, color: "#fff", marginVertical: 12 }}>
-            Hoặc
-          </Text>
-          <ButtonWhite
-            style={{ backgroundColor: "#fff" }}
-            title="Đăng kí"
-            onPress={() => alert("Quyen ne")}
-          />
+          <View style={{ flexDirection: "row", marginTop: 24 }}>
+            <Text
+              style={{
+                fontSize: 14,
+                color: "#fff",
+                marginVertical: 12,
+                marginRight: 4,
+              }}
+            >
+              Bạn chưa nhận được mã?
+            </Text>
+            <Text
+              style={{ fontSize: 14, color: "#FFDD00", marginVertical: 12 }}
+            >
+              Gửi lại mã
+            </Text>
+          </View>
         </View>
       </LinearGradient>
     </View>
   );
 };
 
-export default Login;
+export default LoginOTP;
 
 const styles = StyleSheet.create({
   container: {
