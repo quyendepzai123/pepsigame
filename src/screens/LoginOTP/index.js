@@ -58,6 +58,7 @@ const LoginOTP = (props) => {
         alert(err);
       });
     alert("Login successful");
+    navigation.navigate("Home");
   };
 
   return (
@@ -157,7 +158,11 @@ const LoginOTP = (props) => {
           >
             Xác minh OTP
           </Text>
-          <Text style={{ fontSize: 14, color: "#FFFFFF" }}>
+          <Text
+            style={{ fontSize: 14, color: "#FFFFFF" }}
+            onChangeText={(text) => setCode1(text)}
+            placeholder="Nhập mã OTP"
+          >
             Nhập mã OTP vừa được gửi về điện thoại của bạn
           </Text>
           <View style={{ flexDirection: "row", marginVertical: 32 }}>

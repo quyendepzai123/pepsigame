@@ -11,50 +11,85 @@ import Collection from "./src/screens/Collection";
 import MyGift from "./src/screens/MyGift";
 import { NavigationContainer } from "@react-navigation/native";
 import AppStack from "./src/navigation/AppStack";
-
-// import auth from '@react-native-firebase/auth';
-// firebase.initializeApp({
-//   apiKey: "AIzaSyDvJO2zs_AYp0JV3jIjYQO3b_vYzDfTYjs",
-//   authDomain: "pepsigame-80f12.firebaseapp.com",
-//   projectId: "pepsigame-80f12",
-// });
-// var db = firebase.firestore();
+import {
+  getDatabase,
+  ref,
+  set,
+  child,
+  push,
+  update,
+  get,
+  onValue,
+} from "firebase/database";
+import "firebase/firestore";
+import "firebase/auth";
+import { database, firebase } from "./config";
+import AuthAPI from "./src/modules/api/authAPI.";
+var db = firebase.firestore();
 
 export default function App() {
-  // useEffect(() => {
-  //   console.log("124");
-  //   db.collection("User")
-  //     .get()
-  //     .then((querySnapshot) => {
-  //       querySnapshot.forEach((doc) => {
-  //         console.log("-", doc.data().email, "-", doc.data().name);
-  //       });
-  //     });
-  // }, []);
+  const [email, setEmail] = useState("quyentran124@gmail.com");
+  const [name, setName] = useState("quyentran");
+  const [id, setId] = useState(1);
 
-  // const [initializing, setInitializing] = useState(true);
-  // const [user, setUser] = useState();
+  useEffect(() => {
+    // db.collection("users")
+    //   .get()
+    //   .then((querySnapshot) => {
+    //     querySnapshot.forEach((doc) => {
+    //       console.log("-", doc.data().password, "-", doc.data().name);
+    //     });
+    //   });
+    // createUser();
+    getData();
+    // getUser();
+  }, []);
 
-  // // Handle user state changes
-  // function onAuthStateChanged(user) {
-  //   setUser(user);
-  //   if (initializing) setInitializing(false);
-  // }
+  const getUser = () => {
+    try {
+      AuthAPI.createUser();
+      console.log("signup successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  // useEffect(() => {
-  //   const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-  //   return subscriber; // unsubscribe on unmount
-  // }, []);
+  function upDate() {
+    update(ref(database, "posts/" + "hehe" + name), {
+      name: name,
+      email: "aloaloalo@gmail.com",
+    })
+      .then(() => {
+        console.log("update data successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
-  // if (initializing) return null;
+  function getData() {
+    const starCountRef = ref(database, "users/");
+    onValue(starCountRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach(function (childSnapshot) {
+        const childData = childSnapshot.val();
+        array.push({
+          id: childSnapshot.key,
+          name: childData.name,
+          phone: childData.phone,
+        });
+      });
+      console.log(
+        array.map((item) => {
+          return item.id;
+        })
+      );
+    });
+  }
 
-  // if (!user) {
-    return (
-      <NavigationContainer>
-        <AppStack />
-      </NavigationContainer>
-    );
-  // }
-
-  // return <Register />;
+  return (
+    <NavigationContainer>
+      <AppStack />
+    </NavigationContainer>
+  );
 }

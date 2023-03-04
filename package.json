@@ -10,9 +10,7 @@
   },
   "dependencies": {
     "@react-native-community/checkbox": "^0.5.14",
-    "@react-native-firebase/app": "^17.3.0",
     "@react-native-firebase/auth": "^17.3.0",
-    "@react-native-firebase/database": "^17.3.0",
     "@react-navigation/native": "^6.1.4",
     "@react-navigation/native-stack": "^6.9.10",
     "expo": "~47.0.12",
@@ -21,7 +19,7 @@
     "expo-linear-gradient": "^12.0.1",
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
-    "firebase": "8.8.1",
+    "firebase": "^9.17.1",
     "react": "18.1.0",
     "react-native": "0.70.5",
     "react-native-check-box": "^2.1.7",

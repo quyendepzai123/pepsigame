@@ -15,12 +15,13 @@ import ButtonTimePlay from "../../components/ButtonTimePlay";
 import ButtonClose from "../../components/ButtonClose";
 import ButtonLogout from "../../components/ButtonLogout";
 import ButtonScan from "../../components/ButtonScan";
-const Home = () => {
+const Home = (props) => {
+  const { navigation } = props;
   const [agree, setAgree] = useState(false);
   const [sdt, setSdt] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [timePlayFree, setTimePlayFree] = useState(0);
-  const [timePlayExchange, settimePlayExchange] = useState(1);
+  const [timePlayFree, setTimePlayFree] = useState(1);
+  const [timePlayExchange, settimePlayExchange] = useState(3);
 
   useEffect(() => {
     if (sdt.length === 10) {
@@ -84,7 +85,13 @@ const Home = () => {
                 }}
                 title="Lượt chơi miễn phí"
                 timePlay={timePlayFree}
-                onPress={() => alert("chịu")}
+                onPress={() =>
+                  timePlayFree === 0
+                    ? alert("bạn đã hết Lượt chơi miễn phí")
+                    : (navigation.navigate("Game"),
+                      setTimePlayFree(timePlayFree - 1),
+                      setModalVisible(false))
+                }
                 source={
                   timePlayFree === 0
                     ? require("../../assets/images/ButtonPlayNow/squareGray.png")
@@ -98,7 +105,13 @@ const Home = () => {
                 }}
                 title="Lượt chơi quy đổi"
                 timePlay={timePlayExchange}
-                onPress={() => alert("chịu")}
+                onPress={() =>
+                  timePlayExchange === 0
+                    ? alert("bạn đã hết lượt chơi quy đổi")
+                    : (navigation.navigate("Game"),
+                      settimePlayExchange(timePlayExchange - 1),
+                      setModalVisible(false))
+                }
                 source={
                   timePlayExchange === 0
                     ? require("../../assets/images/ButtonPlayNow/squareGray.png")
@@ -257,11 +270,7 @@ const Home = () => {
 
         <View style={{ alignItems: "center", marginTop: 90 }}>
           <Image
-            style={
-              {
-                // marginTop: 10,
-              }
-            }
+            style={{}}
             source={require("../../assets/images/imageHome/dauLan.png")}
           />
         </View>
@@ -345,7 +354,7 @@ const Home = () => {
             }}
             title="Chơi ngay"
             onPress={() => setModalVisible(true)}
-            timePlay={timePlayFree + timePlayExchange}
+            timePlay={timePlayFree + timePlayExchange + ""}
           />
 
           <ButtonWhite
@@ -406,7 +415,7 @@ const styles = StyleSheet.create({
     width: "80%",
     marginBottom: 4,
     textAlign: "center",
-    color: "#FFDD00",
+    color: "#D02027",
     fontSize: 22,
     fontWeight: "bold",
   },

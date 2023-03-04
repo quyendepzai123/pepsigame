@@ -8,7 +8,7 @@ import TextInputForm from "../../components/TextInputForm";
 // import auth from "@react-native-firebase/auth";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { firebaseConfig } from "../../../config";
-import firebase from "firebase";
+import firebase from "firebase/compat/app";
 
 const Login = (props) => {
   const { navigation } = props;

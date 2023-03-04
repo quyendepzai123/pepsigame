@@ -6,11 +6,13 @@ import {
   Modal,
   Pressable,
   TextInput,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import TitleBack from "../../components/TitleBack";
-const Game = () => {
+const Game = (props) => {
+  const { navigation } = props;
   const [agree, setAgree] = useState(false);
   const [sdt, setSdt] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -119,21 +121,36 @@ const Game = () => {
             source={require("../../assets/images/Game/lonNuocs.png")}
           />
           <Image
-            style={
-              {
-                marginTop: -50,
-              }
-            }
+            style={{
+              marginTop: -50,
+            }}
             source={require("../../assets/images/Game/ButtonTruot.png")}
           />
-          <Image
-            style={
-              {
-                // marginTop: 10,
+          <ScrollView
+            style={{
+              position: "absolute",
+              height: "140%",
+            }}
+            contentContainerStyle={{
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+            showsVerticalScrollIndicator={false}
+            onScroll={(ivent) => {
+              console.log(ivent.nativeEvent.contentOffset.y);
+              if (ivent.nativeEvent.contentOffset.y > 320) {
+                navigation.navigate("Congratulation");
               }
-            }
-            source={require("../../assets/images/imageHome/dauLan.png")}
-          />
+            }}
+          >
+            <View style={{ width: "100%", height: 600 }}></View>
+            <Image
+              style={{}}
+              source={require("../../assets/images/imageHome/dauLan.png")}
+            />
+
+            <View style={{ width: "100%", height: 300 }}></View>
+          </ScrollView>
         </View>
       </LinearGradient>
     </View>
