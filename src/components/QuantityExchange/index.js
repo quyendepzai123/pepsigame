@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 
 const QuantityExchange = (props) => {
   const {
@@ -29,7 +29,7 @@ const QuantityExchange = (props) => {
             lineHeight: 28,
             textAlign: "center",
             backgroundColor: "#005082",
-            borderRadius: 10,
+            borderRadius: 20,
           },
            styleRelease,
         ]}
@@ -58,7 +58,7 @@ const QuantityExchange = (props) => {
               lineHeight: 28,
               textAlign: "center",
               backgroundColor: "#005082",
-              borderRadius: 10,
+              borderRadius: 20,
             },
              styleAdd,
           ]}

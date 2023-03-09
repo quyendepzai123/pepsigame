@@ -6,8 +6,7 @@ import ButtonScan from "../ButtonScan";
 import ButtonWhite from "../ButtonWhite";
 
 const PopupLogout = (props) => {
-  // const [visible, setvisible] = useState(second)
-  const { visible, onPressClose } = props;
+  const { visible, onPressClose, onPressLogout } = props;
   return (
     <Modal
       animationType="slide"
@@ -48,7 +47,6 @@ const PopupLogout = (props) => {
             source={require("../../assets/images/imageHome/popupvectorbot.png")}
           />
           <View style={{ width: "100%", alignItems: "flex-end" }}>
-            <ButtonClose onPress={() => onPressClose()} />
           </View>
           <View style={{ alignItems: "center" }}>
             <Text
@@ -65,15 +63,15 @@ const PopupLogout = (props) => {
           </View>
 
           <ButtonScan
-            style={{ width: 150, height: 50, marginTop: 16}}
+            style={{ width: 150, height: 50, marginTop: 16 }}
             title="Đăng xuất"
-            onPress={() => alert("fasf")}
+            onPress={() => onPressLogout()}
           />
 
           <ButtonWhite
-            style={{ width: 140, height: 40, backgroundColor: '#FFF' }}
+            style={{ width: 140, height: 40, backgroundColor: "#FFF" }}
             title="Hủy"
-            onPress={() => alert("fasf")}
+            onPress={() => onPressClose()}
           />
         </LinearGradient>
       </View>

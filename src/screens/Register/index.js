@@ -1,17 +1,24 @@
-import { StyleSheet, Text, View, Image } from "react-native";
-import React, { useEffect, useState } from "react";
+import { Text, View, Image, ToastAndroid } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import CheckBox from "expo-checkbox";
 import ButtonWhite from "../../components/ButtonWhite";
 import ButtonGray from "../../components/ButtonGray";
 import ButtonRed from "../../components/ButtonRed";
 import TextInputForm from "../../components/TextInputForm";
+import styles from "./styles";
 
-const Register = () => {
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+import { firebaseConfig, firebase, database } from "../../../config";
+import { onValue, ref } from "firebase/database";
+
+const Register = (props) => {
+  const { navigation } = props;
   const [agree, setAgree] = useState(false);
   const [sdt, setSdt] = useState("");
   const [name, setName] = useState("");
   const [check, setCheck] = useState(false);
+  const recaptcha = useRef(null);
 
   useEffect(() => {
     if (sdt.length === 10 && name.length !== 0) {
@@ -21,8 +28,45 @@ const Register = () => {
     }
   }, [agree, sdt, name]);
 
+  const getDataUser = () => {
+    const starCountRef = ref(database, "users/");
+    onValue(starCountRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach(function (childSnapshot) {
+        const childData = childSnapshot.val();
+        array.push({
+          id: childSnapshot.key,
+          name: childData.name,
+          phone: childData.phone,
+          timesFrees: childData.timesFrees,
+          timesExchanges: childData.timesExchanges,
+          coins: childData.coins,
+          collections: childData.collections,
+          gift: childData.gift,
+        });
+      });
+      let count = 0;
+      array.map((item) => {
+        if (item.phone == sdt) {
+          count = 1;
+          // return ToastAndroid.show(
+          //   "Số điện thoại đã được đăng kí vui lòng nhập số điện thoại khác",
+          //   ToastAndroid.SHORT
+          // );
+        }
+      });
+      if (count === 0) {
+        navigation.navigate("RegisterOTP", { phone: sdt, name: name });
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
+      <FirebaseRecaptchaVerifierModal
+        ref={recaptcha}
+        firebaseConfig={firebaseConfig}
+      />
       <LinearGradient
         colors={["#02A7F0", "#0063A7"]}
         start={{
@@ -53,13 +97,9 @@ const Register = () => {
             source={require("../../assets/images/vector2.png")}
           />
         </View>
-        <View style={{ alignItems: "center", marginBottom: 60 }}>
-          <Text style={{ color: "#ffffff", fontSize: 18 }}>
-            Hey, mừng bạn đến với
-          </Text>
-          <Text style={{ color: "#ffffff", fontSize: 30, fontWeight: "bold" }}>
-            Pepsi Tết
-          </Text>
+        <View style={styles.coverTextWelcome}>
+          <Text style={styles.textWelcome}>Hey, mừng bạn đến với</Text>
+          <Text style={styles.textPepsiTet}>Pepsi Tết</Text>
         </View>
         <Image
           style={{
@@ -93,6 +133,7 @@ const Register = () => {
           }}
           source={require("../../assets/images/vector3.png")}
         />
+
         <Image
           style={{
             position: "absolute",
@@ -101,10 +142,8 @@ const Register = () => {
           }}
           source={require("../../assets/images/vector4.png")}
         />
-        <View style={{ alignItems: "center", marginHorizontal: 20 }}>
-          <Text style={{ color: "#ffffff", fontSize: 30, fontWeight: "bold" }}>
-            ĐĂNG KÝ
-          </Text>
+        <View style={styles.form}>
+          <Text style={styles.textHeaderDangKi}>ĐĂNG KÝ</Text>
           <TextInputForm
             placeholder="Số điện thoại"
             onChangeText={(text) => setSdt(text)}
@@ -114,33 +153,38 @@ const Register = () => {
             onChangeText={(text) => setName(text)}
           />
 
-          <View style={{ flexDirection: "row", marginTop: 3 }}>
+          <View style={styles.coverCheckBox}>
             <CheckBox
-              style={{ borderRadius: 7, backgroundColor: "#fff" }}
+              style={styles.checkBox}
               value={check}
               onValueChange={() => setCheck(!check)}
               color={check ? "#000000" : undefined}
             />
-            <Text style={{ marginLeft: 6, color: "#fff", fontWeight: "bold" }}>
+            <Text style={styles.textDongYCheckbox}>
               Tôi đã đọc và đồng ý với{" "}
               <Text style={{ color: "#FFDD00" }}>thể lệ chương trình</Text>{" "}
               Pepsi Tết.
             </Text>
           </View>
         </View>
-        <View style={{ alignItems: "center", marginTop: 118 }}>
-          {(agree) && (check)  ? (
-            <ButtonRed title="Lấy mã OTP" onPress={() => alert(agree)} />
+        <View style={styles.coverButton}>
+          {agree && check ? (
+            <ButtonRed title="Lấy mã OTP" onPress={() => getDataUser()} />
           ) : (
-            <ButtonGray title="Lấy mã OTP" onPress={() => alert(agree)} />
+            <ButtonGray
+              title="Lấy mã OTP"
+              onPress={() =>
+                alert(
+                  "Vui lòng điền đủ thông tin và đồng ý thể lệ chương trình"
+                )
+              }
+            />
           )}
-          <Text style={{ fontSize: 16, color: "#fff", marginVertical: 12 }}>
-            Hoặc
-          </Text>
+          <Text style={styles.textHoac}>Hoặc</Text>
           <ButtonWhite
             style={{ backgroundColor: "#fff" }}
             title="Đăng nhập"
-            onPress={() => alert("Quyen ne")}
+            onPress={() => navigation.navigate("Login")}
           />
         </View>
       </LinearGradient>
@@ -149,16 +193,3 @@ const Register = () => {
 };
 
 export default Register;
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "red",
-  },
-  box: {
-    width: "100%",
-    height: "100%",
-    // backgroundColor: radial-gradient(60.04% 60.04% at 50% 50%, #02A7F0 0%, #0063A7 100%);
-  },
-});

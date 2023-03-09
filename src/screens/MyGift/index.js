@@ -1,12 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Modal,
-  Pressable,
-  FlatList,
-} from "react-native";
+import { Text, View, Image, Modal, Pressable, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import TitleBack from "../../components/TitleBack";
@@ -15,24 +7,39 @@ import ButtonScan from "../../components/ButtonScan";
 import ItemGiftExchange from "../../components/ItemGiftExchange";
 import ItemMyGift from "../../components/ItemMyGift";
 import TextInputFormGiftExchange from "../../components/TextInputFormGiftExchange";
+import { onValue, ref, update } from "firebase/database";
+import { useIsFocused } from "@react-navigation/native";
+import { database } from "../../../config";
+import styles from "./styles";
 
-const MyGift = () => {
-  const [quantity, setQuantity] = useState(1);
-
+const MyGift = (props) => {
+  const { navigation, route } = props;
+  const isFocused = useIsFocused();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleGift, setModalVisibleGift] = useState(false);
-
   const [selectButtonGiftExchange, setSelectButtonGiftExchange] =
     useState(true);
-
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [note, setNote] = useState("");
+  const [user, setUser] = useState({});
+  const [product, setProduct] = useState([]);
+  const [id, setId] = useState("");
 
   const [errorName, setErrorName] = useState("");
   const [errorPhone, setErrorPhone] = useState("");
   const [errorAddress, setErrorAddress] = useState("");
+  const [itemProduct, setItemProduct] = useState([]);
+
+  useEffect(() => {
+    getDataUser();
+    getDataProduct();
+    if (Object.keys(user).length === 0) {
+      setId(route.params.user.id);
+      setUser(route.params.user);
+    }
+  }, [id, isFocused]);
 
   const Validate = () => {
     if (name.length === 0) {
@@ -56,42 +63,137 @@ const MyGift = () => {
     } else {
       setErrorAddress("");
     }
+    setName("");
+    setAddress("");
+    setPhone("");
+    setNote("");
     return DoiQua();
   };
-  const DATA = [
-    {
-      id: 1,
-      name: "Pepsi Bucket Hat",
-      quantity: 600,
-      price: 80,
-      image: "../../assets/images/MyGift/giftHat.png",
-    },
-    {
-      id: 2,
-      name: "Pepsi Jacket",
-      quantity: 10,
-      price: 300,
-      image: "../../assets/images/MyGift/giftHat.png",
-    },
-    {
-      id: 3,
-      name: "Pepsi Tote Bag",
-      quantity: 600,
-      price: 80,
-      image: "../../assets/images/MyGift/giftHat.png",
-    },
-    {
-      id: 4,
-      name: "Pepsi Tumbler",
-      quantity: 10,
-      price: 600,
-      image: "../../assets/images/MyGift/giftHat.png",
-    },
-  ];
+
+  const getDataUser = () => {
+    const starCountRef = ref(database, "users/");
+    onValue(starCountRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach(function (childSnapshot) {
+        const childData = childSnapshot.val();
+        array.push({
+          id: childSnapshot.key,
+          name: childData.name,
+          phone: childData.phone,
+          timesFrees: childData.timesFrees,
+          timesExchanges: childData.timesExchanges,
+          coins: childData.coins,
+          collections: childData.collections,
+          gift: childData.gift,
+        });
+      });
+      array.map((item) => {
+        if (item.id === id) {
+          // console.log(item.gift[0].quantity);
+          setUser(item);
+          return item;
+        } else {
+          return null;
+        }
+      });
+    });
+  };
+
+  const getDataProduct = () => {
+    const starCountRef = ref(database, "products/");
+    onValue(starCountRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach(function (childSnapshot) {
+        const childData = childSnapshot.val();
+        array.push({
+          id: childSnapshot.key,
+          name: childData.name,
+          quantity: childData.quantity,
+          price: childData.price,
+          image: childData.image,
+        });
+      });
+      setProduct(array);
+    });
+  };
+
+  function upDate(item) {
+    update(ref(database, "users/" + user.id), {
+      coins: user.coins - item.price,
+      gift: [
+        {
+          id: 2,
+          name: "Pepsi Cap",
+          image:
+            "https://res.cloudinary.com/dlpl2vcpg/image/upload/v1678184898/pepsigame/pepsi-hat_ebjzqe.png",
+          quantity:
+            item.id == "2925427"
+              ? user.gift[0].quantity + 1
+              : user.gift[0].quantity,
+          status: 1,
+        },
+        {
+          id: 3,
+          name: "Pepsi Jacket",
+          image:
+            "https://res.cloudinary.com/dlpl2vcpg/image/upload/v1678184898/pepsigame/pepsi-jacket_x8l0pp.png",
+          quantity:
+            item.id == "4752630"
+              ? user.gift[1].quantity + 1
+              : user.gift[1].quantity,
+          status: 1,
+        },
+        {
+          id: 4,
+          name: "Pepsi Tote Bag",
+          image:
+            "https://res.cloudinary.com/dlpl2vcpg/image/upload/v1678184899/pepsigame/pepsi-bag_jfofqa.png",
+          quantity:
+            item.id == "6404387"
+              ? user.gift[2].quantity + 1
+              : user.gift[2].quantity,
+          status: 1,
+        },
+        {
+          id: 5,
+          name: "Pepsi Tumbler",
+          image:
+            "https://res.cloudinary.com/dlpl2vcpg/image/upload/v1678184898/pepsigame/pepsi-glass_imzylr.png",
+          quantity:
+            item.id == "5477465"
+              ? user.gift[3].quantity + 1
+              : user.gift[3].quantity,
+          status: 1,
+        },
+      ],
+    })
+      .then(() => {
+        console.log("update data successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   const DoiQua = () => {
     setModalVisible(false);
     setModalVisibleGift(true);
+  };
+
+  const ChangeGift = (item) => {
+    if (item.price > user.coins) {
+      alert("Bạn không đủ coins để đổi");
+    } else {
+      setModalVisible(true);
+      setItemProduct(item);
+      console.log(itemProduct);
+    }
+  };
+
+  const confirm = () => {
+    upDate(itemProduct);
+    setModalVisibleGift(false);
+    navigation.navigate("MyGift", { user: user });
   };
 
   const RenderItemGiftExchange = ({ item }) => {
@@ -100,13 +202,21 @@ const MyGift = () => {
         name={item.name}
         price={item.price}
         quantity={item.quantity}
-        onPress={() => setModalVisible(true)}
+        image={item.image}
+        onPress={() => ChangeGift(item)}
       />
     );
   };
 
   const RenderItemMyGift = ({ item }) => {
-    return <ItemMyGift name={item.name} status="Đã nhận" quantity="2" />;
+    return (
+      <ItemMyGift
+        name={item.name}
+        status={item.status}
+        quantity={item.quantity}
+        image={item.image}
+      />
+    );
   };
 
   return (
@@ -154,28 +264,13 @@ const MyGift = () => {
               <ButtonClose onPress={() => setModalVisible(!modalVisible)} />
             </View>
             <View>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  color: "#005082",
-                  textAlign: "center",
-                  marginBottom: 20,
-                }}
-              >
+              <Text style={styles.textModalThongTinNhanQua}>
                 THÔNG TIN NHẬN QUÀ
               </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#005082",
-                  fontWeight: "bold",
-                  marginBottom: 16,
-                }}
-              >
+              <Text style={styles.textModalNameGift}>
                 Quà của bạn:{" "}
                 <Text style={{ fontSize: 18, color: "#D02027" }}>
-                  Pepsi Tote Bag
+                  {itemProduct.name}
                 </Text>
               </Text>
               <TextInputFormGiftExchange
@@ -259,39 +354,18 @@ const MyGift = () => {
                 onPress={() => setModalVisibleGift(!modalVisibleGift)}
               />
             </View>
-            <View style={{ alignItems: "center", justifyContent: "center" }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  color: "#FFDD00",
-                  textAlign: "center",
-                  marginBottom: 20,
-                }}
-              >
-                THÀNH CÔNG
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#FFFFFF",
-                  fontWeight: "bold",
-                  marginBottom: 16,
-                }}
-              >
+            <View style={styles.coverTextChangeGiftSuccess}>
+              <Text style={styles.textModalThanhCong}>THÀNH CÔNG</Text>
+              <Text style={styles.textModalChucMung}>
                 Chúc mừng bạn nhận được quà từ
               </Text>
-              <Text
-                style={{ fontSize: 18, color: "#FFFFFF", fontWeight: "bold" }}
-              >
-                Pepsi Tết
-              </Text>
+              <Text style={styles.textPepsiTet}>Pepsi Tết</Text>
             </View>
 
             <ButtonScan
               style={{ width: 150, height: 50 }}
               title="Xác nhận"
-              onPress={() => Validate()}
+              onPress={() => confirm()}
             />
           </LinearGradient>
         </View>
@@ -330,45 +404,49 @@ const MyGift = () => {
 
         <TitleBack
           style={{}}
+          enableIconBack={true}
           titleScreen="Chi tiết quà tặng"
-          onPressBack={() => alert("back nè")}
-          onPressLogout={() => alert("Logout nè")}
+          onPressBack={() => navigation.navigate("Home", { item: user })}
+          onPressLogout={() => navigation.navigate("Login")}
         />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 24,
-          }}
-        >
+        <View style={styles.coverButtonChangeAndMyGift}>
           <Pressable
             onPress={() => setSelectButtonGiftExchange(true)}
-            style={{
-              width: 140,
-              height: 40,
-              backgroundColor: selectButtonGiftExchange ? "#D02027" : "#FFFFFF",
-              justifyContent: "center",
-              alignItems: "center",
-              borderTopLeftRadius: 10,
-              borderBottomLeftRadius: 10,
-            }}
+            style={[
+              styles.ButtonDoiQua,
+              {
+                backgroundColor: selectButtonGiftExchange
+                  ? "#D02027"
+                  : "#FFFFFF",
+              },
+            ]}
           >
-            <Text style={{ fontSize: 18, fontWeight: "bold", color: selectButtonGiftExchange ? "#FFFFFF" : "#D02027" }}>Đổi quà</Text>
+            <Text
+              style={[
+                styles.textDoiQua,
+                { color: selectButtonGiftExchange ? "#FFFFFF" : "#D02027" },
+              ]}
+            >
+              Đổi quà
+            </Text>
           </Pressable>
           <Pressable
             onPress={() => setSelectButtonGiftExchange(false)}
-            style={{
-              width: 140,
-              height: 40,
-              backgroundColor: selectButtonGiftExchange ? "#FFFFFF" : "#D02027",
-              justifyContent: "center",
-              alignItems: "center",
-              borderTopRightRadius: 10,
-              borderBottomRightRadius: 10,
-            }}
+            style={[
+              styles.buttonMyGift,
+              {
+                backgroundColor: selectButtonGiftExchange
+                  ? "#FFFFFF"
+                  : "#D02027",
+              },
+            ]}
           >
-            <Text style={{ fontSize: 18, fontWeight: "bold", color: selectButtonGiftExchange ? "#D02027" : "#FFFFFF" }}>
+            <Text
+              style={[
+                styles.textQuaCuaToi,
+                { color: selectButtonGiftExchange ? "#D02027" : "#FFFFFF" },
+              ]}
+            >
               Quà của tôi
             </Text>
           </Pressable>
@@ -415,41 +493,14 @@ const MyGift = () => {
         />
         {selectButtonGiftExchange ? (
           <View>
-            <View
-              style={{
-                alignItems: "center",
-                marginTop: 32,
-                justifyContent: "center",
-              }}
-            >
+            <View style={styles.coverCoins}>
               <Image
-                style={{
-                  backgroundColor: "#FF0F18",
-                  borderRadius: 50,
-                }}
+                style={styles.backGroundCoins}
                 source={require("../../assets/images/Collection/eslipCoins.png")}
               />
-              <Text
-                style={{
-                  position: "absolute",
-                  fontSize: 32,
-                  fontWeight: "bold",
-                  color: "#FFF",
-                }}
-              >
-                700
-              </Text>
+              <Text style={styles.textCoins}>{user.coins}</Text>
             </View>
-            <Text
-              style={{
-                marginTop: 12,
-                fontSize: 18,
-                fontWeight: "bold",
-                textAlign: "center",
-                color: "#FFF",
-                marginBottom: 30,
-              }}
-            >
+            <Text style={styles.textSoCoinHienTai}>
               Số coins hiện tại của bạn
             </Text>
           </View>
@@ -459,28 +510,20 @@ const MyGift = () => {
 
         {selectButtonGiftExchange ? (
           <FlatList
-            style={{
-              flexDirection: "column",
-              paddingHorizontal: 10,
-              paddingBottom: 50,
-            }}
+            style={styles.flatListDoiQua}
             numColumns={2}
             horizontal={false}
             renderItem={RenderItemGiftExchange}
-            data={DATA}
+            data={product}
             keyExtractor={(item) => item.id}
           />
         ) : (
           <FlatList
-            style={{
-              flexDirection: "column",
-              paddingHorizontal: 10,
-              paddingBottom: 50,
-            }}
+            style={styles.flatListQuaCuaToi}
             numColumns={2}
             horizontal={false}
             renderItem={RenderItemMyGift}
-            data={DATA}
+            data={user.gift}
             keyExtractor={(item) => item.id}
           />
         )}
@@ -490,46 +533,3 @@ const MyGift = () => {
 };
 
 export default MyGift;
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "red",
-  },
-  box: {
-    width: "100%",
-    height: "100%",
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  modalText: {
-    width: "80%",
-    marginBottom: 4,
-    textAlign: "center",
-    color: "#FFDD00",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-});

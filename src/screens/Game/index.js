@@ -1,29 +1,75 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Modal,
-  Pressable,
-  TextInput,
-  ScrollView,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Image, ScrollView } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import TitleBack from "../../components/TitleBack";
+import { useIsFocused } from "@react-navigation/native";
+import { ref, update } from "firebase/database";
+import { database } from "../../../config";
+import styles from "./styles";
+
 const Game = (props) => {
-  const { navigation } = props;
-  const [agree, setAgree] = useState(false);
-  const [sdt, setSdt] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
+  const { navigation, route } = props;
+  const [scrollEnable, setScrollEnable] = useState(true);
+  const [user, setUser] = useState([]);
+
+  const scrollViewRef = useRef();
 
   useEffect(() => {
-    if (sdt.length === 10) {
-      setAgree(true);
+    if (route.params.item != undefined) {
+      setScrollEnable(true);
     } else {
-      setAgree(false);
+      setScrollEnable(false);
     }
-  }, [agree, sdt]);
+    setUser(route.params.item);
+  }, []);
+
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    if (isFocused) {
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+      if (!scrollEnable) {
+        navigation.navigate("Home", { item: user });
+      }
+    }
+  }, [isFocused]);
+
+  function upDate() {
+    update(ref(database, "users/" + route.params.item.id), {
+      name: "Tran Quyền",
+      coins:
+        randomCoin === 1
+          ? route.params.item.coins + 50
+          : route.params.item.coins + 100,
+      collections: {
+        loc:
+          randomLonNuoc === 1
+            ? route.params.item.collections.loc + 1
+            : route.params.item.collections.loc,
+        phuc:
+          randomLonNuoc === 2
+            ? route.params.item.collections.phuc + 1
+            : route.params.item.collections.phuc,
+        an:
+          randomLonNuoc === 3
+            ? route.params.item.collections.an + 1
+            : route.params.item.collections.an,
+      },
+      timesFrees: route.params.timesFree
+        ? route.params.item.timesFrees - 1
+        : route.params.item.timesFrees,
+      timesExchanges: !route.params.timesFree
+        ? route.params.item.timesExchanges - 1
+        : route.params.item.timesExchanges,
+    })
+      .then(() => {
+        console.log("update data successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  const randomLonNuoc = Math.floor(Math.random() * 3) + 1;
+  const randomCoin = Math.floor(Math.random() * 2) + 1;
 
   return (
     <View style={styles.container}>
@@ -106,18 +152,18 @@ const Game = (props) => {
           />
         </View>
         <TitleBack
-          onPressBack={() => alert("back ne")}
-          onPressLogout={() => alert("log out ne")}
-          title="3"
+          enableIconBack={true}
+          onPressBack={() => navigation.goBack("Home")}
+          timesPlay={route.params.timesPlay}
+          titleScreen="VUỐT LÊN ĐỂ CHƠI"
+          enableTitleBelow={true}
+          selectFree={route.params.timesFree}
+          onPressLogout={() => navigation.navigate("Login")}
         />
 
         <View style={{ alignItems: "center", marginTop: 10 }}>
           <Image
-            style={{
-              marginLeft: 11,
-              width: "100%",
-              height: 560,
-            }}
+            style={styles.imageLonNuocDo}
             source={require("../../assets/images/Game/lonNuocs.png")}
           />
           <Image
@@ -135,20 +181,32 @@ const Game = (props) => {
               justifyContent: "flex-end",
               alignItems: "center",
             }}
+            ref={scrollViewRef}
             showsVerticalScrollIndicator={false}
+            scrollEnabled={scrollEnable}
             onScroll={(ivent) => {
-              console.log(ivent.nativeEvent.contentOffset.y);
-              if (ivent.nativeEvent.contentOffset.y > 320) {
-                navigation.navigate("Congratulation");
+              if (scrollEnable) {
+                if (ivent.nativeEvent.contentOffset.y >= 200) {
+                  setScrollEnable(false);
+                  upDate();
+                  navigation.navigate("Congratulation", {
+                    item: route.params.item,
+                    collections:
+                      randomLonNuoc === 1
+                        ? "loc"
+                        : randomLonNuoc === 2
+                        ? "phuc"
+                        : "an",
+                    coins: randomCoin === 1 ? 50 : 100,
+                  });
+                }
               }
             }}
           >
             <View style={{ width: "100%", height: 600 }}></View>
             <Image
-              style={{}}
               source={require("../../assets/images/imageHome/dauLan.png")}
             />
-
             <View style={{ width: "100%", height: 300 }}></View>
           </ScrollView>
         </View>
@@ -158,16 +216,3 @@ const Game = (props) => {
 };
 
 export default Game;
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "red",
-  },
-  box: {
-    width: "100%",
-    height: "100%",
-    // backgroundColor: radial-gradient(60.04% 60.04% at 50% 50%, #02A7F0 0%, #0063A7 100%);
-  },
-});

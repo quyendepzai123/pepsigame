@@ -1,18 +1,21 @@
-import { StyleSheet, Text, View, Image, Button } from "react-native";
+import { Text, View, Image, ToastAndroid } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import ButtonWhite from "../../components/ButtonWhite";
 import ButtonGray from "../../components/ButtonGray";
 import ButtonRed from "../../components/ButtonRed";
 import TextInputForm from "../../components/TextInputForm";
-// import auth from "@react-native-firebase/auth";
+import styles from "./styles";
+
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
-import { firebaseConfig } from "../../../config";
-import firebase from "firebase/compat/app";
+import { firebaseConfig, database } from "../../../config";
+import { onValue, ref } from "firebase/database";
 
 const Login = (props) => {
   const { navigation } = props;
+  const [sdt, setSdt] = useState("");
   const [agree, setAgree] = useState(false);
+  const recaptcha = useRef(null);
 
   useEffect(() => {
     if (sdt.length === 10) {
@@ -21,33 +24,42 @@ const Login = (props) => {
       setAgree(false);
     }
   }, [agree, sdt]);
-  const [confirm, setConfirm] = useState(null);
-  const [sdt, setSdt] = useState("");
-  const [code, setCode] = useState("");
-  const [verify, setVerify] = useState(null);
-  const recaptcha = useRef(null);
-  const [oke, setOke] = useState(false);
 
-  const sendVerify = () => {
-    const phoneProvider = new firebase.auth.PhoneAuthProvider();
-    phoneProvider
-      .verifyPhoneNumber("+84" + sdt, recaptcha.current)
-      .then(setVerify);
-    setSdt("");
-  };
 
-  const confirmCode = () => {
-    const credential = firebase.auth.PhoneAuthProvider.credential(verify, code);
-    firebase
-      .auth()
-      .signInWithCredential(credential)
-      .then(() => {
-        setCode("");
-      })
-      .catch((err) => {
-        alert("Error");
+  const getDataUser = () => {
+    const starCountRef = ref(database, "users/");
+    onValue(starCountRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach(function (childSnapshot) {
+        const childData = childSnapshot.val();
+        array.push({
+          id: childSnapshot.key,
+          name: childData.name,
+          phone: childData.phone,
+          timesFrees: childData.timesFrees,
+          timesExchanges: childData.timesExchanges,
+          coins: childData.coins,
+          collections: childData.collections,
+          gift: childData.gift,
+        });
       });
-    alert("Login successful");
+
+      array.map((item) => {
+        if (item.phone == sdt) {
+          navigation.navigate("LoginOTP", {
+            item: item,
+          });
+          return false;
+        }
+        //  else {
+        //   ToastAndroid.show(
+        //     "SỐ điện thoại chưa đăng kí tài khoản",
+        //     ToastAndroid.SHORT
+        //   );
+        //   return false;
+        // }
+      });
+    });
   };
 
   return (
@@ -134,16 +146,10 @@ const Login = (props) => {
           }}
           source={require("../../assets/images/vector4.png")}
         />
-        <View style={{ alignItems: "center", marginHorizontal: 20 }}>
-          <Text style={{ color: "#ffffff", fontSize: 30, fontWeight: "bold" }}>
-            ĐĂNG NHẬP
-          </Text>
-          <View style={{ width: "100%", marginTop: 12 }}>
-            <Text
-              style={{ fontSize: 14, fontWeight: "bold", color: "#FFFFFF" }}
-            >
-              Số điện thoại
-            </Text>
+        <View style={styles.coverHeaderForm}>
+          <Text style={styles.textDangNhap}>ĐĂNG NHẬP</Text>
+          <View style={styles.coverForm}>
+            <Text style={styles.textSDT}>Số điện thoại</Text>
             <TextInputForm
               placeholder="Số điện thoại"
               onChangeText={(text) => setSdt(text)}
@@ -158,25 +164,20 @@ const Login = (props) => {
             source={require("../../assets/images/3lon.png")}
           />
         </View>
-        <View style={{ alignItems: "center", marginTop: 20 }}>
+        <View style={styles.coverButton}>
           {agree ? (
-            <ButtonRed
-              title="Lấy mã OTP"
-              onPress={() => navigation.navigate("LoginOTP", { phone: sdt })}
-            />
+            <ButtonRed title="Lấy mã OTP" onPress={() => getDataUser()} />
           ) : (
             <ButtonGray
               title="Lấy mã OTP"
-              onPress={() => navigation.navigate("LoginOTP", { phone: sdt })}
+              onPress={() => alert("Vui lòng điền đúng số điện thoại")}
             />
           )}
-          <Text style={{ fontSize: 16, color: "#fff", marginVertical: 12 }}>
-            Hoặc
-          </Text>
+          <Text style={styles.textHoac}>Hoặc</Text>
           <ButtonWhite
             style={{ backgroundColor: "#fff" }}
             title="Đăng kí"
-            onPress={() => alert("Quyen ne")}
+            onPress={() => navigation.navigate("Register")}
           />
         </View>
       </LinearGradient>
@@ -185,16 +186,3 @@ const Login = (props) => {
 };
 
 export default Login;
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "red",
-  },
-  box: {
-    width: "100%",
-    height: "100%",
-    // backgroundColor: radial-gradient(60.04% 60.04% at 50% 50%, #02A7F0 0%, #0063A7 100%);
-  },
-});

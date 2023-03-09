@@ -2,8 +2,8 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 import ButtonWhite from "../ButtonWhite";
 
-const ItemGiftExchange = ( props ) => {
-    const {  price, quantity, name, onPress } = props;
+const ItemGiftExchange = (props) => {
+  const { price, quantity, name, onPress, image } = props;
   return (
     <View
       style={{
@@ -26,8 +26,8 @@ const ItemGiftExchange = ( props ) => {
         }}
       >
         <Image
-          style={{ width: "70%", height: "70%"}}
-          source={require("../../assets/images/MyGift/giftHat.png")}
+          style={{ width: "70%", height: "70%" }}
+          source={{ uri: image }}
         />
         <View
           style={{
@@ -39,7 +39,6 @@ const ItemGiftExchange = ( props ) => {
           }}
         >
           <Image
-          
             source={require("../../assets/images/MyGift/coverPrice.png")}
           />
           <Text
@@ -65,9 +64,7 @@ const ItemGiftExchange = ( props ) => {
           borderBottomRightRadius: 12,
         }}
       >
-        <Text style={{ color: "#FFDD00", fontWeight: "bold" }}>
-          {name}
-        </Text>
+        <Text style={{ color: "#FFDD00", fontWeight: "bold" }}>{name}</Text>
         <Text style={{ fontSize: 10, color: "#FFFFFF", marginBottom: 6 }}>
           Còn lại: {quantity}
         </Text>

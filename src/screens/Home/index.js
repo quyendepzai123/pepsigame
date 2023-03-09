@@ -1,39 +1,77 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Modal,
-  Pressable,
-  TextInput,
-} from "react-native";
+import { Text, View, Image, Modal } from "react-native";
 import React, { useEffect, useState } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import ButtonWhite from "../../components/ButtonWhite";
 import ButtonPlayNow from "../../components/ButtonPlayNow";
 import ButtonTimePlay from "../../components/ButtonTimePlay";
 import ButtonClose from "../../components/ButtonClose";
-import ButtonLogout from "../../components/ButtonLogout";
 import ButtonScan from "../../components/ButtonScan";
+import TitleBack from "../../components/TitleBack";
+import styles from "./styles";
+import { database, firebaseConfig } from "../../../config";
+import { onValue, ref } from "firebase/database";
+
 const Home = (props) => {
-  const { navigation } = props;
-  const [agree, setAgree] = useState(false);
-  const [sdt, setSdt] = useState("");
+  const { navigation, route } = props;
   const [modalVisible, setModalVisible] = useState(false);
   const [timePlayFree, setTimePlayFree] = useState(1);
   const [timePlayExchange, settimePlayExchange] = useState(3);
+  const [id, setId] = useState("");
+  const [user, setUser] = useState({});
+  const [isTrue, setIsTrue] = useState(true);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    if (sdt.length === 10) {
-      setAgree(true);
-    } else {
-      setAgree(false);
-    }
-  }, [agree, sdt]);
+      if (Object.keys(id).length === 0) {
+        setId(route.params.item.id);
+        setUser(route.params.item);
+  }
+  }, []);
+
+  useEffect(() => {
+    getDataUser();
+    // if (Object.keys(user).length === 0) {
+    //   setId(route.params.item.id);
+    //   setUser(route.params.item);
+    // }
+
+    setTimeout(() => {
+      setIsTrue(false);
+    }, 1000);
+  }, [id, isFocused]);
+
+  const getDataUser = () => {
+    const starCountRef = ref(database, "users/");
+    onValue(starCountRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach(function (childSnapshot) {
+        const childData = childSnapshot.val();
+        array.push({
+          id: childSnapshot.key,
+          name: childData.name,
+          phone: childData.phone,
+          timesFrees: childData.timesFrees,
+          timesExchanges: childData.timesExchanges,
+          coins: childData.coins,
+          collections: childData.collections,
+          gift: childData.gift,
+        });
+      });
+      array.map((item) => {
+        if (item.id === id) {
+          setUser(item);
+          return item;
+        } else {
+          return null;
+        }
+      });
+    });
+  };
 
   return (
     <View style={styles.container}>
-      {timePlayFree + timePlayExchange > 0 ? (
+      {user.timesFrees + user.timesExchanges > 0 ? (
         <Modal
           animationType="slide"
           transparent={true}
@@ -81,19 +119,24 @@ const Home = (props) => {
               </Text>
               <ButtonTimePlay
                 style={{
-                  backgroundColor: timePlayFree === 0 ? "#7A848A" : "#D02027",
+                  backgroundColor:
+                    user.timesFrees === 0 ? "#7A848A" : "#D02027",
                 }}
                 title="Lượt chơi miễn phí"
-                timePlay={timePlayFree}
+                timePlay={user.timesFrees}
                 onPress={() =>
-                  timePlayFree === 0
+                  user.timesFrees === 0
                     ? alert("bạn đã hết Lượt chơi miễn phí")
-                    : (navigation.navigate("Game"),
-                      setTimePlayFree(timePlayFree - 1),
+                    : (setTimePlayFree(timePlayFree - 1),
+                      navigation.navigate("Game", {
+                        item: user,
+                        timesFree: true,
+                      }),
+                      console.log(user.id),
                       setModalVisible(false))
                 }
                 source={
-                  timePlayFree === 0
+                  user.timesFrees === 0
                     ? require("../../assets/images/ButtonPlayNow/squareGray.png")
                     : require("../../assets/images/ButtonPlayNow/square.png")
                 }
@@ -101,19 +144,22 @@ const Home = (props) => {
               <ButtonTimePlay
                 style={{
                   backgroundColor:
-                    timePlayExchange === 0 ? "#7A848A" : "#D02027",
+                    user.timesExchanges === 0 ? "#7A848A" : "#D02027",
                 }}
                 title="Lượt chơi quy đổi"
-                timePlay={timePlayExchange}
+                timePlay={user.timesExchanges}
                 onPress={() =>
-                  timePlayExchange === 0
+                  user.timesExchanges === 0
                     ? alert("bạn đã hết lượt chơi quy đổi")
-                    : (navigation.navigate("Game"),
-                      settimePlayExchange(timePlayExchange - 1),
+                    : (settimePlayExchange(timePlayExchange - 1),
+                      navigation.navigate("Game", {
+                        item: user,
+                        timesFree: false,
+                      }),
                       setModalVisible(false))
                 }
                 source={
-                  timePlayExchange === 0
+                  user.timesExchanges === 0
                     ? require("../../assets/images/ButtonPlayNow/squareGray.png")
                     : require("../../assets/images/ButtonPlayNow/square.png")
                 }
@@ -132,17 +178,8 @@ const Home = (props) => {
           }}
         >
           <View style={styles.centeredView}>
-            {/* <View style={styles.modalView}> */}
             <LinearGradient
               colors={["#02A7F0", "#0063A7"]}
-              // start={{
-              //   x: 1.1,
-              //   y: -0.1,
-              // }}
-              // end={{
-              //   x: 2.401,
-              //   y: 2.401,
-              // }}
               style={styles.modalView}
             >
               <Image
@@ -176,15 +213,7 @@ const Home = (props) => {
 
               <Text style={styles.modalText}>BẠN ĐÃ HẾT LƯỢT!</Text>
 
-              <Text
-                style={{
-                  width: 220,
-                  color: "#FFF",
-                  fontSize: 16,
-                  textAlign: "center",
-                  fontWeight: "400",
-                }}
-              >
+              <Text style={styles.textSCanThem}>
                 Hãy scan thêm mã trên bill mua nước hoặc combo Pepsi rạp để nhận
                 thêm lượt chơi
               </Text>
@@ -198,23 +227,11 @@ const Home = (props) => {
                 onPress={() => alert("chịu")}
               />
             </LinearGradient>
-            {/* </View> */}
           </View>
         </Modal>
       )}
 
-      <LinearGradient
-        colors={["#02A7F0", "#0063A7"]}
-        // start={{
-        //   x: 64 / 100,
-        //   y: 64 / 100,
-        // }}
-        // end={{
-        //   x: 0.5,
-        //   y: 0.5,
-        // }}
-        style={styles.box}
-      >
+      <LinearGradient colors={["#02A7F0", "#0063A7"]} style={styles.box}>
         <View style={{ flexDirection: "row" }}>
           <Image
             style={{
@@ -266,7 +283,15 @@ const Home = (props) => {
           }}
           source={require("../../assets/images/imageHome/boxSquare.png")}
         />
-        <ButtonLogout onPressLogout={() => alert("log out ne")} />
+        <TitleBack
+          enableIconBack={false}
+          onPress={() => alert("back")}
+          titleScreen=""
+          enableTitleBelow={false}
+          timesPlay="3"
+          select={true}
+          onPressLogout={() => navigation.navigate("Login")}
+        />
 
         <View style={{ alignItems: "center", marginTop: 90 }}>
           <Image
@@ -337,16 +362,7 @@ const Home = (props) => {
           />
         </View>
         <View style={{ alignItems: "center" }}>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "bold",
-              marginVertical: 8,
-              color: "#FFDD00",
-            }}
-          >
-            Hướng dẫn
-          </Text>
+          <Text style={styles.textHuongDan}>Hướng dẫn</Text>
 
           <ButtonPlayNow
             style={{
@@ -354,23 +370,23 @@ const Home = (props) => {
             }}
             title="Chơi ngay"
             onPress={() => setModalVisible(true)}
-            timePlay={timePlayFree + timePlayExchange + ""}
+            timePlay={user.timesFrees + user.timesExchanges + ""}
           />
 
           <ButtonWhite
-            style={{ backgroundColor: "#fff", marginVertical: 10 }}
+            style={styles.buttonWhite}
             title="Quét mã"
-            onPress={() => alert("Quyen ne")}
+            onPress={() => navigation.navigate("Scan")}
           />
           <ButtonWhite
-            style={{ backgroundColor: "#fff", marginVertical: 10 }}
+            style={styles.buttonWhite}
             title="Bộ sưu tập"
-            onPress={() => alert("Quyen ne")}
+            onPress={() => navigation.navigate("Collection", { item: user })}
           />
           <ButtonWhite
-            style={{ backgroundColor: "#fff", marginVertical: 10 }}
+            style={styles.buttonWhite}
             title="Chi tiết quà tặng"
-            onPress={() => alert("Quyen ne")}
+            onPress={() => navigation.navigate("MyGift", { user: user })}
           />
         </View>
       </LinearGradient>
@@ -379,55 +395,3 @@ const Home = (props) => {
 };
 
 export default Home;
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "red",
-  },
-  box: {
-    width: "100%",
-    height: "100%",
-    // backgroundColor: radial-gradient(60.04% 60.04% at 50% 50%, #02A7F0 0%, #0063A7 100%);
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  modalText: {
-    width: "80%",
-    marginBottom: 4,
-    textAlign: "center",
-    color: "#D02027",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});

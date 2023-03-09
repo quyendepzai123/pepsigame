@@ -1,23 +1,12 @@
-import { StyleSheet, Text, View, Image } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Image } from "react-native";
+import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import ButtonWhite from "../../components/ButtonWhite";
-import ButtonGray from "../../components/ButtonGray";
 import ButtonRed from "../../components/ButtonRed";
-import TextInputForm from "../../components/TextInputForm";
 import TitleBack from "../../components/TitleBack";
+import styles from "./styles";
 
-const Scan = () => {
-  const [agree, setAgree] = useState(false);
-  const [sdt, setSdt] = useState("");
-
-  useEffect(() => {
-    if (sdt.length === 10) {
-      setAgree(true);
-    } else {
-      setAgree(false);
-    }
-  }, [agree, sdt]);
+const Scan = (props) => {
+  const { navigation } = props;
 
   return (
     <View style={styles.container}>
@@ -33,7 +22,7 @@ const Scan = () => {
         }}
         style={styles.box}
       >
-        <View style={{ flexDirection: "row", marginBottom: 0 }}>
+        <View style={{ flexDirection: "row" }}>
           <Image
             style={{
               position: "absolute",
@@ -54,8 +43,9 @@ const Scan = () => {
         <TitleBack
           style={{ marginBottom: 40 }}
           titleScreen="Quét mã"
-          onPressBack={() => alert("back nè")}
-          onPressLogout={() => alert("Logout nè")}
+          enableIconBack={true}
+          onPressBack={() => navigation.navigate('Home')}
+          onPressLogout={() => navigation.navigate("Login")}
         />
         <Image
           style={{
@@ -107,11 +97,7 @@ const Scan = () => {
           />
         </View>
         <View style={{ alignItems: "center", marginTop: 20 }}>
-          <ButtonRed
-            style={{}}
-            title="Quét mã"
-            onPress={() => alert("Quyen ne")}
-          />
+          <ButtonRed title="Quét mã" onPress={() => alert("Scan")} />
         </View>
       </LinearGradient>
     </View>
@@ -119,16 +105,3 @@ const Scan = () => {
 };
 
 export default Scan;
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "red",
-  },
-  box: {
-    width: "100%",
-    height: "100%",
-    // backgroundColor: radial-gradient(60.04% 60.04% at 50% 50%, #02A7F0 0%, #0063A7 100%);
-  },
-});

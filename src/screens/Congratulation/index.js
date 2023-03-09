@@ -1,23 +1,13 @@
-import { StyleSheet, Text, View, Image } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Image } from "react-native";
+import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import ButtonWhite from "../../components/ButtonWhite";
 import ButtonRed from "../../components/ButtonRed";
-import ButtonLogout from "../../components/ButtonLogout";
 import CongratulationLonNoc from "../../components/CongratulationLonNuoc";
+import TitleBack from "../../components/TitleBack";
+import styles from "./styles";
 
-const Congratulation = () => {
-  const [agree, setAgree] = useState(false);
-  const [sdt, setSdt] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    if (sdt.length === 10) {
-      setAgree(true);
-    } else {
-      setAgree(false);
-    }
-  }, [agree, sdt]);
+const Congratulation = (props) => {
+  const { navigation, route } = props;
 
   return (
     <View style={styles.container}>
@@ -160,18 +150,17 @@ const Congratulation = () => {
           }}
           source={require("../../assets/images/imageHome/flowerYellow.png")}
         />
-        <ButtonLogout onPressLogout={() => alert("log out ne")} />
+        <TitleBack
+          enableIconBack={false}
+          onPress={() => navigation.navigate("Home")}
+          titleScreen=""
+          enableTitleBelow={false}
+          timesPlay="3"
+          select={true}
+          onPressLogout={() => navigation.navigate("Login")}
+        />
 
-        <View
-          style={{
-            width: "100%",
-            height: 500,
-            position: "absolute",
-            bottom: 0,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <View style={styles.coverImage}>
           <Image
             style={{
               position: "absolute",
@@ -184,8 +173,6 @@ const Congratulation = () => {
           <Image
             style={{
               position: "absolute",
-              // width: '100%',
-              // left: 20,
               bottom: 0,
             }}
             source={require("../../assets/images/imageHome/caiTrong.png")}
@@ -193,15 +180,29 @@ const Congratulation = () => {
         </View>
 
         <CongratulationLonNoc
-          quantityCoins="100"
-          title="1 lon Pepsi AN"
-          source={require("../../assets/images/Congratulation/lonPepsi.png")}
+          quantityCoins={route.params.coins}
+          title={
+            route.params.collections == "an"
+              ? "1 lon Pepsi AN"
+              : route.params.collections == "phuc"
+              ? "1 lon Mirinda PHÚC"
+              : "1 lon 7Up LỘC"
+          }
+          source={
+            route.params.collections == "an"
+              ? require("../../assets/images/Congratulation/lonPepsi.png")
+              : route.params.collections == "phuc"
+              ? require("../../assets/images/Congratulation/mirinda.png")
+              : require("../../assets/images/Congratulation/lon7up.png")
+          }
         />
         <View style={{ alignItems: "center" }}>
           <ButtonRed
             style={{ marginTop: 20 }}
             title="Xác nhận"
-            onPress={() => alert("Quyen ne")}
+            onPress={() =>
+              navigation.navigate("Home", { item: route.params.item })
+            }
           />
         </View>
       </LinearGradient>
@@ -210,55 +211,3 @@ const Congratulation = () => {
 };
 
 export default Congratulation;
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "red",
-  },
-  box: {
-    width: "100%",
-    height: "100%",
-    // backgroundColor: radial-gradient(60.04% 60.04% at 50% 50%, #02A7F0 0%, #0063A7 100%);
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    width: "80%",
-    marginBottom: 15,
-    textAlign: "center",
-    color: "#D02027",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-});

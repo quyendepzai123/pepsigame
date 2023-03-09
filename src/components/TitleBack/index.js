@@ -3,55 +3,102 @@ import React, { useState } from "react";
 import PopupLogout from "../PopupLogout";
 
 const TitleBack = (props) => {
-  const { onPressBack, onPressLogout, title, titleScreen } = props;
+  const {
+    enableIconBack,
+    onPressBack,
+    timesPlay,
+    titleScreen,
+    selectFree,
+    enableTitleBelow,
+    onPressLogout,
+  } = props;
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <View
       style={{
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         marginTop: 56,
-        marginHorizontal: 20,
+        marginBottom: 20,
+        paddingHorizontal: 20,
       }}
     >
       <PopupLogout
         visible={modalVisible}
         onPressClose={() => setModalVisible(false)}
+        onPressLogout={() => onPressLogout()}
       />
-      <Pressable onPress={() => onPressBack()}>
-        <Image
-          style={{
-            width: 24,
-            height: 24,
-          }}
-          source={require("../../assets/images/iconBack.png")}
-        />
-      </Pressable>
+      {enableIconBack ? (
+        <Pressable onPress={() => onPressBack()}>
+          <Image
+            style={{
+              width: 24,
+              height: 24,
+            }}
+            source={require("../../assets/images/iconBack.png")}
+          />
+        </Pressable>
+      ) : (
+        <View></View>
+      )}
 
-      <View
-        style={{
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Text
+      {enableTitleBelow ? (
+        <View
           style={{
-            color: "#FFFFFF",
-            fontSize: 24,
-            textTransform: "uppercase",
-            fontWeight: "bold",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          {titleScreen}
-        </Text>
-        <Text style={{ color: "#FFFFFF", fontSize: 18, display: "none" }}>
-          Bạn còn{" "}
-          <Text style={{ color: "#FFDD00", fontSize: 18 }}>{title}</Text> lượt
-          chơi miễn phí
-        </Text>
-      </View>
+          <Text
+            style={{
+              color: "#FFFFFF",
+              fontSize: 24,
+              textTransform: "uppercase",
+              fontWeight: "bold",
+            }}
+          >
+            {titleScreen}
+          </Text>
+          {selectFree ? (
+            <Text style={{ color: "#FFFFFF", fontSize: 18 }}>
+              Bạn còn{" "}
+              <Text style={{ color: "#FFDD00", fontSize: 18 }}>
+                {timesPlay}
+              </Text>{" "}
+              lượt chơi miễn phí
+            </Text>
+          ) : (
+            <Text style={{ color: "#FFFFFF", fontSize: 18 }}>
+              Bạn còn{" "}
+              <Text style={{ color: "#FFDD00", fontSize: 18 }}>
+                {timesPlay}
+              </Text>{" "}
+              lượt quy đổi
+            </Text>
+          )}
+        </View>
+      ) : (
+        <View
+          style={{
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{
+              color: "#FFFFFF",
+              fontSize: 24,
+              textTransform: "uppercase",
+              fontWeight: "bold",
+            }}
+          >
+            {titleScreen}
+          </Text>
+        </View>
+      )}
       <View>
         <Pressable
           //   style={{ width: 50, height: 50, backgroundColor: "#ccc" }}

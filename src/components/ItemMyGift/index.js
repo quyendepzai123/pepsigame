@@ -2,7 +2,7 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 
 const ItemMyGift = (props) => {
-  const { status, quantity, name } = props;
+  const { status, quantity, name, image } = props;
   return (
     <View
       style={{
@@ -26,7 +26,7 @@ const ItemMyGift = (props) => {
       >
         <Image
           style={{ width: "70%", height: "70%" }}
-          source={require("../../assets/images/MyGift/giftHat.png")}
+          source={{ uri: image }}
         />
         <View
           style={{
@@ -63,7 +63,9 @@ const ItemMyGift = (props) => {
           borderBottomRightRadius: 12,
         }}
       >
-        <Text style={{fontSize: 16, color: "#005082", fontWeight: "bold" }}>{name}</Text>
+        <Text style={{ fontSize: 16, color: "#005082", fontWeight: "bold" }}>
+          {name}
+        </Text>
         <View
           style={{
             flexDirection: "row",
@@ -72,11 +74,14 @@ const ItemMyGift = (props) => {
             marginBottom: 6,
           }}
         >
-          <Text style={{ fontSize: 12, color: "#005082" }}>
-            Trạng thái : 
-          </Text>
-          <Text style={{ fontSize: 12, color: "#00A61B" }}>
-             {status}
+          <Text style={{ fontSize: 12, color: "#005082" }}>Trạng thái :</Text>
+          <Text
+            style={{
+              fontSize: 12,
+              color: status === 1 ? "#D02027" : "#00A61B",
+            }}
+          >
+            {status === 1 ? "Chưa nhận" : "Đã nhận"}
           </Text>
         </View>
       </View>

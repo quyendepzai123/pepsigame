@@ -41,31 +41,29 @@ export default function App() {
     //     });
     //   });
     // createUser();
-    getData();
+    // getData();
     // getUser();
+    // createProduct();
   }, []);
 
-  const getUser = () => {
+  const createUser = () => {
     try {
-      AuthAPI.createUser();
-      console.log("signup successfully");
+      AuthAPI.createUser('Trần Quyền', '0834196884');
+      console.log("create user successfully");
     } catch (error) {
       console.log(error);
     }
   };
 
-  function upDate() {
-    update(ref(database, "posts/" + "hehe" + name), {
-      name: name,
-      email: "aloaloalo@gmail.com",
-    })
-      .then(() => {
-        console.log("update data successfully");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  const createProduct = () => {
+    try {
+      AuthAPI.createProduct();
+      console.log("create product successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   function getData() {
     const starCountRef = ref(database, "users/");

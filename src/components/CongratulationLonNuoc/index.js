@@ -2,7 +2,7 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 
 const CongratulationLonNoc = (props) => {
-    const { source, quantityCoins, title } = props;
+  const { source, quantityCoins, title } = props;
   return (
     <View style={{ alignItems: "center", width: "100%" }}>
       <View style={{ alignItems: "center", width: 180 }}>
@@ -51,7 +51,8 @@ const CongratulationLonNoc = (props) => {
               color: "#FFDD00",
             }}
           >
-            {"\n"}{title}{" "}
+            {"\n"}
+            {title}{" "}
           </Text>
           ứng với
           <Text
@@ -62,9 +63,8 @@ const CongratulationLonNoc = (props) => {
             }}
           >
             {" "}
-            {quantityCoins}{" "}
+            {quantityCoins} coins
           </Text>
-          coins
         </Text>
       </View>
     </View>

@@ -3,7 +3,7 @@ export const API_ROUTES = {
     user: `/users/`,
   
     // product
-    getProducts: `/product/`,
+    product: `/products/`,
   };
   export default API_ROUTES;
   
