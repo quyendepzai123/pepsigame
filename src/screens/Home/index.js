@@ -23,10 +23,10 @@ const Home = (props) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-      if (Object.keys(id).length === 0) {
-        setId(route.params.item.id);
-        setUser(route.params.item);
-  }
+    if (Object.keys(id).length === 0) {
+      setId(route.params.item.id);
+      setUser(route.params.item);
+    }
   }, []);
 
   useEffect(() => {
@@ -362,7 +362,12 @@ const Home = (props) => {
           />
         </View>
         <View style={{ alignItems: "center" }}>
-          <Text style={styles.textHuongDan}>Hướng dẫn</Text>
+          <Text
+            style={styles.textHuongDan}
+            onPress={() => navigation.navigate("Intrust", { item: user })}
+          >
+            Hướng dẫn
+          </Text>
 
           <ButtonPlayNow
             style={{

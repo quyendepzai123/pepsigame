@@ -162,7 +162,12 @@ const Register = (props) => {
             />
             <Text style={styles.textDongYCheckbox}>
               Tôi đã đọc và đồng ý với{" "}
-              <Text style={{ color: "#FFDD00" }}>thể lệ chương trình</Text>{" "}
+              <Text
+                style={{ color: "#FFDD00" }}
+                onPress={() => navigation.navigate("Rules")}
+              >
+                thể lệ chương trình
+              </Text>{" "}
               Pepsi Tết.
             </Text>
           </View>
