@@ -33,14 +33,14 @@ const Collection = (props) => {
       setId(route.params.item.id);
       setUser(route.params.item);
     }
-    console.log("allllllllllllll");
-  }, [id, isFocused]);
-
-  useEffect(() => {
     if (user.an === 0 || user.loc === 0 || user.phuc === 0) {
       setQuantity(0);
     }
-  }, [quantity]);
+  }, [id, isFocused]);
+
+  // useEffect(() => {
+   
+  // }, []);
 
   const getDataUser = () => {
     const starCountRef = ref(database, "users/");
